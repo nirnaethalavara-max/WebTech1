@@ -1,0 +1,105 @@
+﻿@using Kakhanouskaya.UI.Models
+@model IEnumerable<ListDemo>
+
+@{
+    // ViewBag.Title = "Index";
+    // Ствараем масіў або спіс элементаў
+    // var items = new List<string> { "Элемент 1 спісу", "Элемент 2 спісу", "Элемент 3 спісу" };
+    // Перадаем тэкст праз ViewData
+    // ViewData["Header"] = "Лабараторная работа №3";    
+
+    // Ствараем SelectList на аснове Model, якая прыйшла з кантролера
+    var selectList = new SelectList(Model, "Id", "Name");
+}
+            <div class="container mt-4">
+            <h2>@ViewData["Header"]</h2>
+
+                <!-- Раздзел са спісам -->
+                
+                <h3>Спіс</h3>
+                 <ol type="A">
+                    <li>Элемент 1 спісу</li>
+                    <li>Элемент 2 спісу</li>
+                    <li>Элемент 3 спісу</li>
+                </ol>
+
+                <hr />
+
+                <!-- Раздзел з формай -->
+                <h3>Форма</h3>
+              
+                <form method="post" action="#">
+       
+                    <!-- Выпадальны спіс -->
+                    <div class="mb-3 row">
+                        <label for="itemsList" class="col-sm-2 col-form-label">Выбар элемента</label>
+                        <div class="col-sm-10">
+                            <select class="form-select"
+                                    id="itemsList"
+                                    name="selectedId"
+                                    asp-items="selectList">
+                                <option value="">-- Выберыце са спісу --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Чэк-боксы -->
+                    <div class="mb-3 row">
+                        <label class="col-sm-2 col-form-label"></label>
+                        <div class="col-sm-10">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="check1" id="check1" value="on">
+                                <label class="form-check-label" for="check1">Чэк-бокс 1</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="check2" id="check2" value="on">
+                                <label class="form-check-label" for="check2">Чэк-бокс 2</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Радыё-кнопкі -->
+                    <div class="mb-3 row">
+                        <label class="col-sm-2 col-form-label"></label>
+                        <div class="col-sm-10">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="radioGroup" id="radio1" value="1" checked>
+                                <label class="form-check-label" for="radio1">Радыё-1</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="radioGroup" id="radio2" value="2">
+                                <label class="form-check-label" for="radio2">Радыё-2</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="radioGroup" id="radio3" value="3">
+                                <label class="form-check-label" for="radio3">Радыё-3</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Палі ўводу -->
+                    <div class="mb-3 row">
+                        <label for="inputName" class="col-sm-2 col-form-label">Имя</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="userName" id="inputName" placeholder="Увядзіце імя">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="inputPassword" class="col-sm-2 col-form-label">Пароль</label>
+                        <div class="col-sm-10">
+                            <input type="password" class="form-control" name="userPassword" id="inputPassword" placeholder="Увядзіце пароль">
+                        </div>
+                    </div>
+
+                    <!-- Кнопка  -->
+                    <div class="row">
+                        <div class="col-sm-10 offset-sm-2">
+                            <button type="submit" class="btn btn-primary">Даслаць</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+
+   
+

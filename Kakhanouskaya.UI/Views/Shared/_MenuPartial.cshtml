@@ -1,0 +1,27 @@
+﻿@{
+    // Дастаем назву бягучага кантролера
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString()?.ToLower() ?? string.Empty;
+    var area = ViewContext.RouteData.Values["area"]?.ToString()?.ToLower() ?? string.Empty;
+}
+
+<!-- меню сайта -->
+<a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">WebLabsV03</a>
+<div class="navbar-nav">
+    <!-- Для Лб Х правяраем, ці роўны кантролер "home" -->
+    <a class="nav-item nav-link @(controller == "home" ? "active" : "")"
+       asp-area=""
+       asp-controller="Home"
+       asp-action="Index">Лб 3</a>
+
+    <!-- Для Каталога правяраем, ці роўны кантролер "product" -->
+    <a class="nav-item nav-link @(controller == "product" ? "active" : "")"
+       asp-area=""
+       asp-controller="Product"
+       asp-action="Index">Каталог</a>
+
+    <!-- Для Адміністравання (калі гэта Area, праверка крыху іншая, пакуль пакінем так) -->
+    <a class="nav-item nav-link @(area == "admin" ? "active" : "")"
+       asp-area="Admin"
+       asp-page="/Index">Адміністраванне</a>
+</div>
+<!-- меню сайта - конец -->

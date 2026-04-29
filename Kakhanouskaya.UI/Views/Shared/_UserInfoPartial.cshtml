@@ -1,0 +1,44 @@
+﻿<!-- Информация пользователя -->
+@using Kakhanouskaya.UI.Data
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@await Component.InvokeAsync("Cart")
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <div class="dropdown ms-4 nav-color">
+        <button class="btn btn-secondary dropdown-toggle"
+                type="button" id="dropdownMenuButton"
+                data-bs-toggle="dropdown"
+                aria-expanded="false">
+            @User.Identity?.Name
+            <img src="~/images/muzhchina_kapyushon_serial_8126.jpg" width="30"
+                 alt="User" class="rounded nav-color" />
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <li>
+                <span class="dropdown-item-text">
+                    <img src="~/images/muzhchina_kapyushon_serial_8126.jpg"
+                         width="50" alt="User" class="rounded" />
+                    @User.Identity?.Name
+                </span>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+                <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" method="post">
+                    <button id="logout" type="submit" class="nav-link btn btn-link text-dark">Logout</button>
+                </form>
+            </li>
+        </ul>
+    </div>
+}
+else
+{
+    <div class="navbar-nav ms-auto">
+        <a asp-area="Identity" asp-page="/Account/Login" class="nav-item nav-link">Login</a>
+        <a asp-area="Identity" asp-page="/Account/Register" class="nav-item nav-link">Register</a>
+    </div>
+}
+<!-- Информация пользователя - конец -->
