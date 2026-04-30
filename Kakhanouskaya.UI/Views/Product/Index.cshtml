@@ -1,0 +1,78 @@
+﻿@using Kakhanouskaya.DOMAIN.Entities
+@model IEnumerable<Dish>
+@{
+    ViewData["Title"] = "Меню";
+
+    // Атрымаць URL для вяртання
+    var request = ViewContext.HttpContext.Request;
+    var returnUrl = request.Path + request.QueryString.ToUriComponent();
+}
+
+<h2 class="m-3 text-center">Наша меню</h2>
+
+<!-- Фільтр па катэгорыях -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="dropdown">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Катэгорыя: @ViewBag.CurrentCategory
+            </button>
+            <ul class="dropdown-menu">
+                <li>
+                    <a class="dropdown-item" asp-controller="Product" asp-action="Index" asp-route-category="">
+                        Усе
+                    </a>
+                </li>
+                @if (ViewBag.Categories != null)
+                {
+                    @foreach (var cat in ViewBag.Categories)
+                    {
+                        <li>
+                            <a class="dropdown-item"
+                               asp-controller="Product"
+                               asp-action="Index"
+                               asp-route-category="@cat.NormalizedName">
+                                @cat.Name
+                            </a>
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Спіс страў у выглядзе картак -->
+@if (Model != null && Model.Any())
+{
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var item in Model)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <img src="@item.Image" class="card-img-top" alt="@item.Name" style="height: 200px; object-fit: cover;" />
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Name</h5>
+                        <p class="card-text">@item.Description</p>
+                        <h6 class="text-primary">@item.Price руб.</h6>
+                    </div>
+                    <div class="card-footer bg-white text-center">
+                        <a class="btn btn-outline-success"
+                           asp-controller="Cart"
+                           asp-action="Add"
+                           asp-route-id="@item.Id"
+                           asp-route-returnurl="@returnUrl">
+                            <i class="fa-solid fa-cart-shopping"></i> У кошык
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-warning text-center">
+        @ViewBag.Error ?? "Няма страў у гэтай катэгорыі"
+    </div>
+}

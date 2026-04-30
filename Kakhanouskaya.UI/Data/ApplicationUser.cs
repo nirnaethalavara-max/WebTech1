@@ -4,7 +4,7 @@ namespace Kakhanouskaya.UI.Data
 {
     public class ApplicationUser : IdentityUser
     {
-        // Тут можна будзе дадаць дадатковыя ўласцівасці, калі спатрэбяцца
-        // Напрыклад: FirstName, LastName, BirthDate і г.д.
+        public byte[]? Avatar { get; set; }
+        public string MimeType { get; set; } = string.Empty;
     }
 }

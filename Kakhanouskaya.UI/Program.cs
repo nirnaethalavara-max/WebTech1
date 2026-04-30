@@ -1,3 +1,4 @@
+using Kakhanouskaya.DOMAIN.Services;
 using Kakhanouskaya.UI.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -34,6 +35,9 @@ builder.Services.AddAuthorization(opt =>
 {
     opt.AddPolicy("admin", p => p.RequireClaim(System.Security.Claims.ClaimTypes.Role, "admin"));
 });
+
+builder.Services.AddScoped<ICategoryService, MemoryCategoryService>();
+builder.Services.AddScoped<IProductService, MemoryProductService>();
 
 var app = builder.Build();
 
