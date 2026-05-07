@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 using Kakhanouskaya.DOMAIN.Entities;
 using Kakhanouskaya.DOMAIN.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace Kakhanouskaya.DOMAIN.Services
 {
@@ -14,9 +16,11 @@ namespace Kakhanouskaya.DOMAIN.Services
     {
         private List<Dish> _dishes;
         private List<Category> _categories;
+        private readonly IConfiguration _config;
 
-        public MemoryProductService(ICategoryService categoryService)
+        public MemoryProductService(IConfiguration config, ICategoryService categoryService)
         {
+            _config = config;
             var categoryResponse = categoryService.GetCategoryListAsync().Result;
             _categories = categoryResponse.Data!;
             SetupData();
@@ -67,29 +71,54 @@ namespace Kakhanouskaya.DOMAIN.Services
 
         public Task<ResponseData<ListModel<Dish>>> GetProductListAsync(string? categoryNormalizedName, int pageNo = 1)
         {
-            // 1. Спачатку ПАДЦЯГВАЕМ Category для ўсіх страў
+            // 1. Падцягваем Category для ўсіх страў
             foreach (var dish in _dishes)
             {
                 dish.Category = _categories.FirstOrDefault(c => c.Id == dish.CategoryId);
             }
 
-            // 2. Затым ФІЛЬТРУЕМ
+            // 2. Фільтруем па катэгорыі (калі пададзена)
             var filteredDishes = string.IsNullOrEmpty(categoryNormalizedName)
                 ? _dishes
                 : _dishes.Where(d => d.Category != null && d.Category.NormalizedName == categoryNormalizedName).ToList();
 
+            // 3. Атрымліваем памер старонкі з канфігурацыі
+            int pageSize = int.Parse(_config["ItemsPerPage"]);
+
+            // 4. Вылічаем агульную колькасць старонак
+            int totalPages = (int)Math.Ceiling(filteredDishes.Count / (double)pageSize);
+
+            // 5. Правяраем, каб pageNo не быў большым за totalPages
+            if (pageNo > totalPages && totalPages > 0)
+                pageNo = totalPages;
+            if (pageNo < 1)
+                pageNo = 1;
+
+            // 6. Атрымліваем элементы для бягучай старонкі
+            var itemsOnPage = filteredDishes
+                .Skip((pageNo - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            // 7. Ствараем мадэль са спісам тавараў
             var model = new ListModel<Dish>
             {
-                Items = filteredDishes,
-                CurrentPage = 1,
-                TotalPages = 1
+                Items = itemsOnPage,
+                CurrentPage = pageNo,
+                TotalPages = totalPages
             };
 
+            // 8. Фарміруем адказ
             var result = new ResponseData<ListModel<Dish>>
             {
                 Data = model,
-                Success = true
+                Success = filteredDishes.Count > 0 || pageNo == 1  // можа быць пустая катэгорыя
             };
+
+            if (filteredDishes.Count == 0)
+            {
+                result.ErrorMessage = "Няма страў у выбранай катэгорыі";
+            }
 
             return Task.FromResult(result);
         }

@@ -1,4 +1,5 @@
 ﻿using Kakhanouskaya.DOMAIN.Entities;
+using Kakhanouskaya.DOMAIN.Models;      // ← ДАДАЦЬ (для ListModel)
 using Kakhanouskaya.DOMAIN.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,8 +17,10 @@ namespace Kakhanouskaya.UI.Controllers
             _categoryService = categoryService;
         }
 
-        public async Task<IActionResult> Index(string? category)
+        [Route("Catalog/{category?}")]
+        public async Task<IActionResult> Index(string? category, int pageNo = 1)  // ← ДАДАЦЬ pageNo
         {
+        
             // Атрымаць спіс катэгорый
             var categoriesResponse = await _categoryService.GetCategoryListAsync();
             if (!categoriesResponse.Success)
@@ -34,15 +37,16 @@ namespace Kakhanouskaya.UI.Controllers
 
             ViewBag.CurrentCategory = currentCategory;
 
-            // Атрымаць спіс страў
-            var productResponse = await _productService.GetProductListAsync(category);
+            // Атрымаць спіс страў (з пагінацыяй)
+            var productResponse = await _productService.GetProductListAsync(category, pageNo);  // ← ДАДАЦЬ pageNo
+
             if (!productResponse.Success)
             {
                 ViewBag.Error = productResponse.ErrorMessage;
-                return View(new List<Dish>());
+                return View(new ListModel<Dish>());  // ← Вярнуць пустую ListModel
             }
 
-            return View(productResponse.Data?.Items ?? new List<Dish>());
+            return View(productResponse.Data);  // ← Вярнуць увесь ListModel<Dish>, а не толькі Items
         }
     }
 

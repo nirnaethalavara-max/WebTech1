@@ -1,0 +1,29 @@
+﻿@model Kakhanouskaya.DOMAIN.Entities.Dish
+
+@{
+    var request = ViewContext.HttpContext.Request;
+    var returnUrl = request.Path + request.QueryString.ToUriComponent();
+}
+
+<div class="col">
+    <div class="card h-100 shadow-sm">
+        <!-- ВЫКАРЫСТАННЕ ТЭГ-ХЕЛПЕРА ЗАДАННЯ 4 -->
+
+        <img img-action="GetAvatar" img-controller="Image" img-id="@Model.Id"
+             class="card-img-top" alt="@Model.Name" style="max-height: 200px; object-fit: contain;" />
+        <div class="card-body">
+            <h5 class="card-title">@Model.Name</h5>
+            <p class="card-text">@Model.Description</p>
+            <h6 class="text-primary">@Model.Price руб.</h6>
+        </div>
+        <div class="card-footer bg-white text-center">
+            <a class="btn btn-outline-success"
+               asp-controller="Cart"
+               asp-action="Add"
+               asp-route-id="@Model.Id"
+               asp-route-returnurl="@returnUrl">
+                <i class="fa-solid fa-cart-shopping"></i> У кошык
+            </a>
+        </div>
+    </div>
+</div>

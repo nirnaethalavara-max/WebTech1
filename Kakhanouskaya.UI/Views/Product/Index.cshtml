@@ -1,9 +1,26 @@
 ﻿@using Kakhanouskaya.DOMAIN.Entities
-@model IEnumerable<Dish>
+@using Kakhanouskaya.DOMAIN.Models
+@model ListModel<Dish>
+
 @{
     ViewData["Title"] = "Меню";
 
-    // Атрымаць URL для вяртання
+    // Атрымліваем катэгорыю з запыту
+    string? category = Context.Request.Query["category"].ToString();
+
+    // Калі катэгорыя прыйшла праз маршрут (для Задання 6)
+    if (string.IsNullOrEmpty(category))
+    {
+        category = ViewContext.RouteData.Values["category"]?.ToString();
+    }
+
+    // Вылічаем папярэднюю старонку
+    int prevPage = Model.CurrentPage == 1 ? 1 : Model.CurrentPage - 1;
+
+    // Вылічаем наступную старонку
+    int nextPage = Model.CurrentPage == Model.TotalPages ? Model.TotalPages : Model.CurrentPage + 1;
+
+    // URL для вяртання (для кнопкі "У кошык")
     var request = ViewContext.HttpContext.Request;
     var returnUrl = request.Path + request.QueryString.ToUriComponent();
 }
@@ -43,36 +60,26 @@
 </div>
 
 <!-- Спіс страў у выглядзе картак -->
-@if (Model != null && Model.Any())
+@if (Model != null && Model.Items != null && Model.Items.Any())
 {
     <div class="row row-cols-1 row-cols-md-3 g-4">
-        @foreach (var item in Model)
+        @foreach (var item in Model.Items)  // ← ВАЖКА: Model.Items, а не проста Model
         {
-            <div class="col">
-                <div class="card h-100 shadow-sm">
-                    <img src="@item.Image" class="card-img-top" alt="@item.Name" style="height: 200px; object-fit: cover;" />
-                    <div class="card-body">
-                        <h5 class="card-title">@item.Name</h5>
-                        <p class="card-text">@item.Description</p>
-                        <h6 class="text-primary">@item.Price руб.</h6>
-                    </div>
-                    <div class="card-footer bg-white text-center">
-                        <a class="btn btn-outline-success"
-                           asp-controller="Cart"
-                           asp-action="Add"
-                           asp-route-id="@item.Id"
-                           asp-route-returnurl="@returnUrl">
-                            <i class="fa-solid fa-cart-shopping"></i> У кошык
-                        </a>
-                    </div>
-                </div>
-            </div>
+            <partial name="_ProductItemPartial" model="item" />
         }
     </div>
 }
 else
 {
     <div class="alert alert-warning text-center">
-        @ViewBag.Error ?? "Няма страў у гэтай катэгорыі"
+        @(ViewBag.Error ?? "Няма страў у гэтай катэгорыі")
     </div>
 }
+
+<!-- ========================================= -->
+<!-- ЗАДАННЕ 2: КНОПКІ ПЕРАКЛЮЧЭННЯ СТАРОНАК -->
+<!-- ========================================= -->
+<!-- ЗАДАННЕ 3: Тэг-хелпер для пагінацыі (замяняе стары блок з 50 радкоў) -->
+<pager current-page="@Model.CurrentPage"
+       total-pages="@Model.TotalPages"
+       category="@category"></pager>
