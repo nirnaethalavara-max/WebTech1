@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kakhanouskaya.UI", "Kakhano
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kakhanouskaya.DOMAIN", "Kakhanouskaya.DOMAIN\Kakhanouskaya.DOMAIN.csproj", "{F567A6BD-53A1-450C-95A5-B36025D5EBC5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kakhanouskaya.API", "Kakhanouskaya.API\Kakhanouskaya.API.csproj", "{59374C4A-564F-FCDF-D62F-59906310D367}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{F567A6BD-53A1-450C-95A5-B36025D5EBC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F567A6BD-53A1-450C-95A5-B36025D5EBC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F567A6BD-53A1-450C-95A5-B36025D5EBC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59374C4A-564F-FCDF-D62F-59906310D367}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59374C4A-564F-FCDF-D62F-59906310D367}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59374C4A-564F-FCDF-D62F-59906310D367}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59374C4A-564F-FCDF-D62F-59906310D367}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

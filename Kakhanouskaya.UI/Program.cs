@@ -3,6 +3,7 @@ using Kakhanouskaya.UI.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using Kakhanouskaya.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +14,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-// ÂÛÊÀĞÛÑÒÎ¡ÂÀÅÌ AddDefaultIdentity (ÿê ÷àêàå Scaffold)
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 {
     options.SignIn.RequireConfirmedAccount = true;
@@ -36,8 +36,16 @@ builder.Services.AddAuthorization(opt =>
     opt.AddPolicy("admin", p => p.RequireClaim(System.Security.Claims.ClaimTypes.Role, "admin"));
 });
 
-builder.Services.AddScoped<ICategoryService, MemoryCategoryService>();
-builder.Services.AddScoped<IProductService, MemoryProductService>();
+// ÒÎËÜÊ² API-ÑÅĞÂ²ÑÛ (áåç Memory)
+builder.Services.AddHttpClient<ICategoryService, ApiCategoryService>(opt =>
+{
+    opt.BaseAddress = new Uri("http://localhost:5002/api/categories/");
+});
+
+builder.Services.AddHttpClient<IProductService, ApiProductService>(opt =>
+{
+    opt.BaseAddress = new Uri("http://localhost:5002/api/dishes/");
+});
 
 var app = builder.Build();
 

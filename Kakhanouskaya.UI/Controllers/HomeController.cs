@@ -22,5 +22,8 @@ namespace Kakhanouskaya.UI.Controllers
             ViewBag.ItemsList = new SelectList(items, "Id", "Name");
             return View(items);
         }
+
+
     }
+
 }
