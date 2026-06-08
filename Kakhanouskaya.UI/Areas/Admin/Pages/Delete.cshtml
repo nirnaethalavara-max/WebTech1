@@ -1,0 +1,88 @@
+﻿@page
+@model Kakhanouskaya.UI.Areas.Admin.Pages.DeleteModel
+
+@{
+    ViewData["Title"] = "Выдаленне";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Выдаленне стравы</h1>
+
+<div class="alert alert-danger">
+    <h3>Вы ўпэўнены, што хочаце выдаліць гэту страву?</h3>
+</div>
+
+<div class="card">
+    <div class="card-header bg-danger text-white">
+        <h4><i class="fa-solid fa-trash-can"></i> Страва: @Model.Dish.Name</h4>
+    </div>
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Dish.Name)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Dish.Name)
+            </dd>
+
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Dish.Description)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Dish.Description)
+            </dd>
+
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Dish.Price)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Dish.Price) руб.
+            </dd>
+
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Dish.Image)
+            </dt>
+            <dd class="col-sm-10">
+                @if (!string.IsNullOrEmpty(Model.Dish.Image))
+                {
+                    <img src="@Model.Dish.Image" alt="@Model.Dish.Name" style="width: 100px; height: 100px; object-fit: cover;" />
+                    <br />
+                    <small class="text-muted">@Model.Dish.Image</small>
+                }
+                else
+                {
+                    <span class="text-muted">Няма выявы</span>
+                }
+            </dd>
+
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Dish.Category)
+            </dt>
+            <dd class="col-sm-10">
+                <span class="badge bg-info">@Html.DisplayFor(model => model.Dish.Category.Name)</span>
+            </dd>
+        </dl>
+    </div>
+    <div class="card-footer">
+        <form method="post">
+            <input type="hidden" asp-for="Dish.Id" />
+            <button type="submit" class="btn btn-danger">
+                <i class="fa-solid fa-trash-can"></i> Выдаліць
+            </button>
+            <a asp-page="./Index" class="btn btn-secondary">
+                <i class="fa-solid fa-arrow-left"></i> Назад да спісу
+            </a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Дадатковае пацверджанне перад выдаленнем
+        document.querySelector('form').addEventListener('submit', function(e) {
+            if (!confirm('Вы сапраўды хочаце выдаліць страву "@Model.Dish.Name"? Гэта дзеянне нельга адмяніць.')) {
+                e.preventDefault();
+            }
+        });
+    </script>
+}

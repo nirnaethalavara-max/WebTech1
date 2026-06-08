@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Kakhanouskaya.DOMAIN.Entities;
 using Kakhanouskaya.API.Data;
-using Kakhanouskaya.DOMAIN.Entities;
 using Kakhanouskaya.DOMAIN.Models;
 
 namespace Kakhanouskaya.API.Controllers
@@ -12,10 +11,12 @@ namespace Kakhanouskaya.API.Controllers
     public class DishesController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IWebHostEnvironment _env;
 
-        public DishesController(AppDbContext context)
+        public DishesController(AppDbContext context, IWebHostEnvironment env)
         {
             _context = context;
+            _env = env;
         }
 
         // GET: api/dishes?category=desserts&pageNo=1&pageSize=3
@@ -88,5 +89,103 @@ namespace Kakhanouskaya.API.Controllers
             response.Data = dish;
             return Ok(response);
         }
+
+        [HttpPost("{id}")]
+        public async Task<IActionResult> SaveImage(int id, IFormFile image)
+        {
+            var dish = await _context.Dishes.FindAsync(id);
+            if (dish == null) return NotFound();
+
+            var imagesPath = Path.Combine(_env.WebRootPath, "Images");
+            if (!Directory.Exists(imagesPath)) Directory.CreateDirectory(imagesPath);
+
+            var randomName = Path.GetRandomFileName();
+            var extension = Path.GetExtension(image.FileName);
+            var fileName = Path.ChangeExtension(randomName, extension);
+            var filePath = Path.Combine(imagesPath, fileName);
+
+            using var stream = System.IO.File.OpenWrite(filePath);
+            await image.CopyToAsync(stream);
+
+            var host = $"{Request.Scheme}://{Request.Host}";
+            var url = $"{host}/Images/{fileName}";
+            dish.Image = url;
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        // POST: api/dishes
+        [HttpPost]
+        public async Task<ActionResult<ResponseData<Dish>>> PostDish(Dish dish)
+        {
+            var response = new ResponseData<Dish>();
+
+            try
+            {
+                _context.Dishes.Add(dish);
+                await _context.SaveChangesAsync();
+
+                response.Data = dish;
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.ErrorMessage = $"Памылка БД: {ex.Message}";
+                return BadRequest(response);
+            }
+        }
+
+        // DELETE: api/dishes/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteDish(int id)
+        {
+            var dish = await _context.Dishes.FindAsync(id);
+            if (dish == null)
+            {
+                return NotFound(new ResponseData<bool> { Success = false, ErrorMessage = "Страва не знойдзена" });
+            }
+
+            // Калі трэба, тут можна дадаць код выдалення выявы з папкі wwwroot/Images, калі яна існуе
+
+            _context.Dishes.Remove(dish);
+            await _context.SaveChangesAsync();
+
+            return Ok(new ResponseData<bool> { Success = true });
+        }
+
+        // PUT: api/dishes/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutDish(int id, Dish dish)
+        {
+            if (id != dish.Id)
+            {
+                return BadRequest(new ResponseData<bool> { Success = false, ErrorMessage = "ID не супадаюць" });
+            }
+
+            _context.Entry(dish).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Dishes.Any(e => e.Id == id))
+                {
+                    return NotFound(new ResponseData<bool> { Success = false, ErrorMessage = "Страва не знойдзена" });
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return Ok(new ResponseData<bool> { Success = true });
+        }
+
     }
+
+
 }

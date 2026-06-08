@@ -1,0 +1,81 @@
+﻿@page
+@model Kakhanouskaya.UI.Areas.Admin.Pages.DetailsModel
+
+@{
+    ViewData["Title"] = "Падрабязнасці";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Падрабязнасці аб страве</h1>
+
+<div class="card">
+    <div class="card-header bg-info text-white">
+        <h4><i class="fa-solid fa-info-circle"></i> @Model.Dish.Name</h4>
+    </div>
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Dish.Name)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Dish.Name)
+            </dd>
+
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Dish.Description)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Dish.Description)
+            </dd>
+
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Dish.Price)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Dish.Price) руб.
+            </dd>
+
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Dish.Image)
+            </dt>
+            <dd class="col-sm-10">
+                @if (!string.IsNullOrEmpty(Model.Dish.Image))
+                {
+                    <img src="@Model.Dish.Image" alt="@Model.Dish.Name" class="img-fluid" style="max-width: 300px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.2);" />
+                    <br />
+                    <br />
+                    <small class="text-muted">
+                        <i class="fa-solid fa-link"></i> @Model.Dish.Image
+                    </small>
+                }
+                else
+                {
+                    <span class="text-muted">
+                        <i class="fa-solid fa-image-slash"></i> Няма выявы
+                    </span>
+                }
+            </dd>
+
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Dish.Category)
+            </dt>
+            <dd class="col-sm-10">
+                <span class="badge bg-success fs-6">@Html.DisplayFor(model => model.Dish.Category.Name)</span>
+            </dd>
+        </dl>
+    </div>
+    <div class="card-footer">
+        <a asp-page="./Edit" asp-route-id="@Model.Dish.Id" class="btn btn-warning">
+            <i class="fa-solid fa-pen-to-square"></i> Рэдагаваць
+        </a>
+        <a asp-page="./Index" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Назад да спісу
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

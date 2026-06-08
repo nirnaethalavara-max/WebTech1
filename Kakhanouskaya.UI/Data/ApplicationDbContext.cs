@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Kakhanouskaya.DOMAIN.Entities;
 
 namespace Kakhanouskaya.UI.Data
 {
@@ -9,5 +10,6 @@ namespace Kakhanouskaya.UI.Data
             : base(options)
         {
         }
+        public DbSet<Kakhanouskaya.DOMAIN.Entities.Dish> Dish { get; set; } = default!;
     }
 }

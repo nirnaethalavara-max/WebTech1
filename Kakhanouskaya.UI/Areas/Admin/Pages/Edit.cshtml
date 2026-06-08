@@ -1,0 +1,99 @@
+﻿@page
+@model Kakhanouskaya.UI.Areas.Admin.Pages.EditModel
+
+@{
+    ViewData["Title"] = "Рэдагаванне";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Рэдагаванне стравы</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-warning">
+                <h4><i class="fa-solid fa-pen-to-square"></i> Рэдагаванне: @Model.Dish.Name</h4>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                    <input type="hidden" asp-for="Dish.Id" />
+
+                    <div class="mb-3">
+                        <label asp-for="Dish.Name" class="form-label fw-bold"></label>
+                        <input asp-for="Dish.Name" class="form-control" />
+                        <span asp-validation-for="Dish.Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Dish.Description" class="form-label fw-bold"></label>
+                        <textarea asp-for="Dish.Description" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="Dish.Description" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Dish.Price" class="form-label fw-bold"></label>
+                        <div class="input-group">
+                            <input asp-for="Dish.Price" class="form-control" />
+                            <span class="input-group-text">руб.</span>
+                        </div>
+                        <span asp-validation-for="Dish.Price" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Dish.CategoryId" class="form-label fw-bold"></label>
+                        <select asp-for="Dish.CategoryId" class="form-select" asp-items="ViewBag.CategoryId"></select>
+                        <span asp-validation-for="Dish.CategoryId" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Image" class="form-label fw-bold">Выява</label>
+
+                        @if (!string.IsNullOrEmpty(Model.Dish.Image))
+                        {
+                            <div class="mb-2 p-2 border rounded text-center">
+                                <img src="@Model.Dish.Image" alt="@Model.Dish.Name" class="img-fluid" style="max-height: 150px; border-radius: 8px;" />
+                                <br />
+                                <small class="text-muted">Бягучая выява</small>
+                            </div>
+                        }
+
+                        <input asp-for="Image" class="form-control" type="file" accept="image/jpeg,image/png,image/gif" />
+                        <span asp-validation-for="Image" class="text-danger"></span>
+                        <div class="form-text text-muted">
+                            <i class="fa-solid fa-info-circle"></i> Пакіньце пустым, каб не змяняць выяву. Дапушчальныя фарматы: JPEG, PNG, GIF
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa-solid fa-save"></i> Захаваць
+                        </button>
+                        <a asp-page="./Index" class="btn btn-secondary">
+                            <i class="fa-solid fa-arrow-left"></i> Назад да спісу
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        // Папярэдні прагляд выявы перад загрузкай
+        $(document).ready(function() {
+            $('input[type="file"]').change(function(e) {
+                var fileName = e.target.files[0]?.name;
+                if (fileName) {
+                    $(this).next('small').remove();
+                    $(this).after('<small class="text-info"><i class="fa-solid fa-check-circle"></i> Выбраны файл: ' + fileName + '</small>');
+                }
+            });
+        });
+    </script>
+}

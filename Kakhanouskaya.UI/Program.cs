@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Kakhanouskaya.UI.Services;
+using System;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,15 +28,25 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("admin", policy =>
+        policy.RequireClaim(ClaimTypes.Role, "admin"));
+});
 builder.Services.AddTransient<IEmailSender, NoOpEmailSender>();
 
 builder.Services.AddRazorPages();
-builder.Services.AddControllersWithViews();
 
-builder.Services.AddAuthorization(opt =>
-{
-    opt.AddPolicy("admin", p => p.RequireClaim(System.Security.Claims.ClaimTypes.Role, "admin"));
-});
+//// ×ÀÑÎÂÀ - äëÿ Scaffold!
+//builder.Services.AddDbContext<ApplicationDbContext>(options =>
+//    options.UseSqlite("DataSource=:memory:"));
+
+//builder.Services.AddControllersWithViews();
+
+//builder.Services.AddAuthorization(opt =>
+//{
+//    opt.AddPolicy("admin", p => p.RequireClaim(System.Security.Claims.ClaimTypes.Role, "admin"));
+//});
 
 // ÒÎËÜÊ² API-ÑÅÐÂ²ÑÛ (áåç Memory)
 builder.Services.AddHttpClient<ICategoryService, ApiCategoryService>(opt =>
@@ -66,6 +78,10 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/{page=Index}/{id?}");
+
 app.MapRazorPages();
 
 await DbInit.SeedData(app);

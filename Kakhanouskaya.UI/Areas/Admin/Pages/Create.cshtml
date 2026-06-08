@@ -1,0 +1,100 @@
+﻿@page
+@model Kakhanouskaya.UI.Areas.Admin.Pages.CreateModel
+
+@{
+    ViewData["Title"] = "Стварэнне";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Дадаванне новай стравы</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h4><i class="fa-solid fa-plus-circle"></i> Новая страва</h4>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Dish.Name" class="form-label fw-bold"></label>
+                        <input asp-for="Dish.Name" class="form-control" />
+                        <span asp-validation-for="Dish.Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Dish.Description" class="form-label fw-bold"></label>
+                        <textarea asp-for="Dish.Description" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="Dish.Description" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Dish.Price" class="form-label fw-bold"></label>
+                        <div class="input-group">
+                            <input asp-for="Dish.Price" class="form-control" />
+                            <span class="input-group-text">руб.</span>
+                        </div>
+                        <span asp-validation-for="Dish.Price" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Dish.CategoryId" class="form-label fw-bold"></label>
+                        <select asp-for="Dish.CategoryId" class="form-select" asp-items="ViewBag.CategoryId">
+                            <option value="">-- Абярыце катэгорыю --</option>
+                        </select>
+                        <span asp-validation-for="Dish.CategoryId" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Image" class="form-label fw-bold">Выява</label>
+                        <input asp-for="Image" class="form-control" type="file" accept="image/jpeg,image/png,image/gif" />
+                        <span asp-validation-for="Image" class="text-danger"></span>
+                        <div class="form-text text-muted">
+                            <i class="fa-solid fa-info-circle"></i> Дапушчальныя фарматы: JPEG, PNG, GIF
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fa-solid fa-save"></i> Стварыць
+                        </button>
+                        <a asp-page="./Index" class="btn btn-secondary">
+                            <i class="fa-solid fa-arrow-left"></i> Назад да спісу
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        // Папярэдні прагляд выявы
+        $(document).ready(function() {
+            $('input[type="file"]').change(function(e) {
+                var file = e.target.files[0];
+                if (file) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        // Выдаляем стары preview, калі ёсць
+                        $('.image-preview').remove();
+                        // Дадаем новы preview
+                        var preview = '<div class="image-preview mt-2 p-2 border rounded text-center">' +
+                                     '<img src="' + e.target.result + '" class="img-fluid" style="max-height: 150px; border-radius: 8px;" />' +
+                                     '<br /><small class="text-success"><i class="fa-solid fa-check-circle"></i> Выбрана выява</small>' +
+                                     '</div>';
+                        $(this).parent().append(preview);
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+    </script>
+}
