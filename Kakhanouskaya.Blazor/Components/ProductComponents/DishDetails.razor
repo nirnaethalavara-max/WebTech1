@@ -1,0 +1,41 @@
+﻿@using Kakhanouskaya.DOMAIN.Entities
+
+@if (Dish != null)
+{
+    <div class="card mt-4" style="width: 20rem;">
+        @if (!string.IsNullOrEmpty(Dish.Image))
+        {
+            <img src="@Dish.Image" class="card-img-top" alt="@Dish.Name" style="height: 200px; object-fit: cover;">
+        }
+        else
+        {
+            <div class="card-img-top bg-secondary text-white text-center py-5">
+                <i class="bi bi-image" style="font-size: 3rem;"></i>
+            </div>
+        }
+        <div class="card-body">
+            <h5 class="card-title">@Dish.Name</h5>
+            <p class="card-text">@(string.IsNullOrEmpty(Dish.Description) ? "Апісанне адсутнічае" : Dish.Description)</p>
+            <p class="card-text">
+                <strong>Цана:</strong> @Dish.Price руб.
+            </p>
+            @if (Dish.Price > 0)
+            {
+                <p class="card-text">
+                    <strong>Кошт:</strong> @Dish.Price руб
+                </p>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-info mt-4">
+        <i class="bi bi-info-circle"></i> Абярыце страву са спісу, каб убачыць падрабязнасці.
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Dish? Dish { get; set; }
+}

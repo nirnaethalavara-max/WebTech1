@@ -1,0 +1,68 @@
+﻿@implements IDisposable
+@rendermode InteractiveServer
+@using Kakhanouskaya.DOMAIN.Entities
+@using Kakhanouskaya.Blazor.Services
+
+<h3>Спіс страў</h3>
+
+@if (ProductService?.Products == null || !ProductService.Products.Any())
+{
+    <p>Загрузка...</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Назва</th>
+                <th>Цана</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var dish in ProductService.Products)
+            {
+                <tr>
+                    <td>@dish.Name</td>
+                    <td>@dish.Price руб.</td>
+                    <td>
+                        <button class="btn btn-outline-primary btn-sm"
+                                @onclick="() => OnDishSelected(dish.Id)">
+                            Падрабязна
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    // Атрымліваем сервіс праз каскадны параметр (ад бацькі)
+    [CascadingParameter]
+    public IProductService<Dish>? ProductService { get; set; }
+
+    [Parameter]
+    public EventCallback<int> DishSelected { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (ProductService != null)
+        {
+            ProductService.ListChanged += StateHasChanged;
+        }
+    }
+
+    private async Task OnDishSelected(int id)
+    {
+        await DishSelected.InvokeAsync(id);
+    }
+
+    public void Dispose()
+    {
+        if (ProductService != null)
+        {
+            ProductService.ListChanged -= StateHasChanged;
+        }
+    }
+}

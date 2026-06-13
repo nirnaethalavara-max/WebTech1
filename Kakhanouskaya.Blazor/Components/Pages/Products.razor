@@ -1,0 +1,30 @@
+﻿@page "/products"
+@rendermode InteractiveServer
+@using Kakhanouskaya.DOMAIN.Entities
+@using Kakhanouskaya.DOMAIN.Models
+@using Kakhanouskaya.Blazor.Services
+@using Kakhanouskaya.Blazor.Components.ProductComponents
+@inject IProductService<Dish> ProductService
+
+<h2>Каталог страў</h2>
+
+<CascadingValue Value="ProductService">
+    <DishesList DishSelected="ShowDetails" />
+    <Pager />
+</CascadingValue>
+
+<DishDetails Dish="selectedDish" />
+
+@code {
+    private Dish? selectedDish;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ProductService.GetProducts();
+    }
+
+    private void ShowDetails(int id)
+    {
+        selectedDish = ProductService.Products.FirstOrDefault(d => d.Id == id);
+    }
+}

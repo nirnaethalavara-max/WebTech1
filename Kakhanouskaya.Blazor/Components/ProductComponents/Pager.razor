@@ -1,0 +1,78 @@
+﻿@implements IDisposable
+@rendermode InteractiveServer
+@using Kakhanouskaya.DOMAIN.Entities
+@using Kakhanouskaya.Blazor.Services
+
+<div class="btn-group mt-3" role="group" aria-label="Пагінацыя">
+    <button type="button"
+            class="btn btn-outline-primary @(previousEnabled ? "" : "disabled")"
+            @onclick="GoToPreviousPage">
+        <span aria-hidden="true">&laquo;</span> Папярэдняя
+    </button>
+
+    @for (int i = 1; i <= (ProductService?.TotalPages ?? 1); i++)
+    {
+        int pageNum = i;
+        <button type="button"
+                class="btn btn-outline-primary @(IsActive(pageNum) ? "active" : "")"
+                @onclick="() => GoToPage(pageNum)">
+            @pageNum
+        </button>
+    }
+
+    <button type="button"
+            class="btn btn-outline-primary @(nextEnabled ? "" : "disabled")"
+            @onclick="GoToNextPage">
+        Наступная <span aria-hidden="true">&raquo;</span>
+    </button>
+</div>
+
+@code {
+    [CascadingParameter]
+    public IProductService<Dish>? ProductService { get; set; }
+
+    private bool previousEnabled => ProductService != null && ProductService.CurrentPage > 1;
+    private bool nextEnabled => ProductService != null && ProductService.CurrentPage < ProductService.TotalPages;
+
+    private bool IsActive(int pageNo) => ProductService != null && pageNo == ProductService.CurrentPage;
+
+    private async Task GoToPreviousPage()
+    {
+        if (previousEnabled && ProductService != null)
+        {
+            await ProductService.GetProducts(ProductService.CurrentPage - 1);
+        }
+    }
+
+    private async Task GoToNextPage()
+    {
+        if (nextEnabled && ProductService != null)
+        {
+            await ProductService.GetProducts(ProductService.CurrentPage + 1);
+        }
+    }
+
+    private async Task GoToPage(int pageNo)
+    {
+        if (ProductService != null)
+        {
+            await ProductService.GetProducts(pageNo);
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        if (ProductService != null)
+        {
+            ProductService.ListChanged += StateHasChanged;
+        }
+    }
+
+    public void Dispose()
+    {
+        if (ProductService != null)
+        {
+            ProductService.ListChanged -= StateHasChanged;
+        }
+    }
+}
