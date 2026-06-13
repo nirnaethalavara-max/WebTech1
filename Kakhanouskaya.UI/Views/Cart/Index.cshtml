@@ -1,0 +1,43 @@
+﻿@using Kakhanouskaya.DOMAIN.Models
+@model Dictionary<int, CartItem>
+
+@if (Model.Count == 0)
+{
+    <h2 class="m-2">Кошык пусты</h2>
+}
+else
+{
+    <h2 class="m-2">Ваш кошык:</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Выява</th>
+                <th>Назва</th>
+                <th>Апісанне</th>
+                <th>Колькасць</th>
+                <th>Кошт</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td><img src="@item.Value.Item.Image" width="100" /></td>
+                    <td>@item.Value.Item.Name</td>
+                    <td>@item.Value.Item.Description</td>
+                    <td>@item.Value.Quantity</td>
+                    <td>@(item.Value.Item.Price * item.Value.Quantity)</td>
+                    <td>
+                        <a class="btn btn-danger"
+                           asp-action="Remove"
+                           asp-controller="Cart"
+                           asp-route-id="@item.Value.Item.Id">
+                            <i class="fas fa-trash"></i> Выдаліць
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

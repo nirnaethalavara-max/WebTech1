@@ -1,3 +1,8 @@
-﻿<a asp-area="" asp-controller="Cart" asp-action="Index" class="navbar-text ms-auto">
-    00,0 руб <i class="fa-solid fa-cart-shopping"></i> (0)
+﻿@using Kakhanouskaya.DOMAIN.Models
+@model Cart
+
+<a asp-area="" asp-controller="Cart" asp-action="Index" class="navbar-text ms-auto">
+    <i class="fa-solid fa-cart-shopping"></i>
+    @Model.TotalPrice рублёў
+    (@Model.TotalCount)
 </a>

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Serilog;
 
 namespace Kakhanouskaya.UI.Controllers
 {
@@ -20,6 +21,9 @@ namespace Kakhanouskaya.UI.Controllers
         new ListDemo { Id = 3, Name = "Элемент 3" }
     };
             ViewBag.ItemsList = new SelectList(items, "Id", "Name");
+
+            Log.Information("Hello з метада Index контролера Home!");
+            
             return View(items);
         }
 

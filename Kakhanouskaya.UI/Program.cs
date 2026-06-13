@@ -6,8 +6,31 @@ using Microsoft.EntityFrameworkCore;
 using Kakhanouskaya.UI.Services;
 using System;
 using System.Security.Claims;
+using Serilog;
+using Kakhanouskaya.UI.Middleware;
+
+// Настройка Serilog (пішам у кансоль і ў файл)
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File("logs/log.txt",
+        rollingInterval: RollingInterval.Day,
+        outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
+    .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(Log.Logger);
+
+// Дадаём сховішча для сесій (у памяці)
+builder.Services.AddDistributedMemoryCache();
+// Дадаём сервіс сесій
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(20); // сесія жыве 20 хвілін
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -74,6 +97,8 @@ else
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+app.UseFileLogger();
+app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 

@@ -28,21 +28,21 @@ namespace Kakhanouskaya.UI.Controllers
                 return NotFound(categoriesResponse.ErrorMessage);
             }
 
-            ViewBag.Categories = categoriesResponse.Data;
+            ViewData["categories"] = categoriesResponse.Data;
 
             // Вызначыць бягучую катэгорыю для адлюстравання
             var currentCategory = string.IsNullOrEmpty(category)
                 ? "Усе"
                 : categoriesResponse.Data?.FirstOrDefault(c => c.NormalizedName == category)?.Name ?? "Усе";
 
-            ViewBag.CurrentCategory = currentCategory;
+            ViewData["currentCategory"] = currentCategory;
 
             // Атрымаць спіс страў (з пагінацыяй)
             var productResponse = await _productService.GetProductListAsync(category, pageNo);  // ← ДАДАЦЬ pageNo
 
             if (!productResponse.Success)
             {
-                ViewBag.Error = productResponse.ErrorMessage;
+                ViewData["error"] = productResponse.ErrorMessage;
                 return View(new ListModel<Dish>());  // ← Вярнуць пустую ListModel
             }
 
